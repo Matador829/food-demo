@@ -1,7 +1,13 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, Image } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { withNavigation } from 'react-navigation';
+import ResultsDetail from './ResultsDetail';
 
-const ResultsList = ({ title, results }) => {
+const ResultsList = ({ title, results, navigation }) => {
+    if (!results.length) {
+        return null;
+    }
+
     return <View style={styles.container}>
         <Text style={styles.title}>{title}</Text>
         <FlatList
@@ -10,10 +16,11 @@ const ResultsList = ({ title, results }) => {
             data={results}
             keyExtractor={(result) => result.id}
             renderItem={({ item }) => {
-                return <View style={styles.result}>
-                    <Image source={{ uri: item.image_url }} style={styles.image} />
-                    <Text style={styles.name}>{item.name}</Text>
-                </View>;
+                return (
+                    <TouchableOpacity onPress={() => navigation.navigate('ResultsShow', { id: item.id })}>
+                        <ResultsDetail result={item} />
+                    </TouchableOpacity>
+                );
             }}
         />
     </View>;
@@ -23,29 +30,12 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 18,
         fontWeight: 'bold',
+        marginLeft: 15,
+        marginBottom: 5,
     },
     container: {
         marginBottom: 10,
-    },
-    name: {
-        marginRight: 15,
-        marginLeft: 15,
-        marginBottom: 5,
-        padding: 5,
-    },
-    image: {
-        width: 250,
-        height: 120,
-        borderRadius: 4,
-        marginBottom: 5,
-        borderWidth: 1,
-    },
-    result: {
-        marginRight: 15,
-        marginLeft: 15,
-        marginBottom: 5,
-        padding: 5,
-    }
+    },  
 });
 
-export default ResultsList;
+export default withNavigation(ResultsList);
